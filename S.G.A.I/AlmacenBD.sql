@@ -1,6 +1,7 @@
 USE master;
-GO 
+GO
 
+-- Crear la base de datos si no existe, cambiar ruta jovenes, no se olviden.
 IF DB_ID('AlmacenBD') IS NULL
 BEGIN
     CREATE DATABASE AlmacenBD
@@ -54,10 +55,9 @@ IF OBJECT_ID('dbo.CategoriaProducto', 'U') IS NOT NULL DROP TABLE dbo.CategoriaP
 IF OBJECT_ID('dbo.ModeloVehiculo', 'U') IS NOT NULL DROP TABLE dbo.ModeloVehiculo;
 IF OBJECT_ID('dbo.MarcaVehiculo', 'U') IS NOT NULL DROP TABLE dbo.MarcaVehiculo;
 IF OBJECT_ID('dbo.Rol', 'U') IS NOT NULL DROP TABLE dbo.Rol;
-PRINT 'Tablas existentes eliminadas (si aplicable).';
+PRINT 'Tablas existentes eliminadas.';
 GO
 
--- Eliminar Tipos de Datos Definidos por el Usuario (UDTs) si existen
 IF TYPE_ID('dbo.TipoId') IS NOT NULL DROP TYPE dbo.TipoId;
 IF TYPE_ID('dbo.TipoIdGrande') IS NOT NULL DROP TYPE dbo.TipoIdGrande;
 IF TYPE_ID('dbo.TipoCodigo') IS NOT NULL DROP TYPE dbo.TipoCodigo;
@@ -75,20 +75,20 @@ IF TYPE_ID('dbo.TipoMonedaTotal') IS NOT NULL DROP TYPE dbo.TipoMonedaTotal;
 IF TYPE_ID('dbo.TipoCantidad') IS NOT NULL DROP TYPE dbo.TipoCantidad;
 IF TYPE_ID('dbo.TipoFecha') IS NOT NULL DROP TYPE dbo.TipoFecha;
 IF TYPE_ID('dbo.TipoFechaHora') IS NOT NULL DROP TYPE dbo.TipoFechaHora;
-PRINT 'UDTs existentes eliminados (si aplicable).';
+PRINT 'UDTs existentes eliminados.';
 GO
 
 CREATE TYPE dbo.TipoId FROM INT NOT NULL;
 CREATE TYPE dbo.TipoIdGrande FROM BIGINT NOT NULL;
-CREATE TYPE dbo.TipoCodigo FROM NVARCHAR(50) NULL; -- Para códigos como SKU, comprobantes, etc.
-CREATE TYPE dbo.TipoCodigoLargo FROM NVARCHAR(100) NULL; -- Para códigos de barras, etc.
-CREATE TYPE dbo.TipoNombre FROM NVARCHAR(100) NOT NULL; -- Para nombres de Categoría, Marca, Modelo, Contacto
-CREATE TYPE dbo.TipoNombreLargo FROM NVARCHAR(255) NOT NULL; -- Para RazonSocial, NombreCliente, NombreProducto
-CREATE TYPE dbo.TipoDescripcion FROM NVARCHAR(150) NULL; -- Para descripciones cortas, observaciones
-CREATE TYPE dbo.TipoTextoLargo FROM NVARCHAR(300) NULL; -- Para direcciones de texto
+CREATE TYPE dbo.TipoCodigo FROM NVARCHAR(50) NULL;
+CREATE TYPE dbo.TipoCodigoLargo FROM NVARCHAR(100) NULL;
+CREATE TYPE dbo.TipoNombre FROM NVARCHAR(100) NOT NULL;
+CREATE TYPE dbo.TipoNombreLargo FROM NVARCHAR(255) NOT NULL;
+CREATE TYPE dbo.TipoDescripcion FROM NVARCHAR(150) NULL;
+CREATE TYPE dbo.TipoTextoLargo FROM NVARCHAR(300) NULL;
 CREATE TYPE dbo.TipoEmail FROM NVARCHAR(100) NULL;
 CREATE TYPE dbo.TipoTelefono FROM NVARCHAR(50) NOT NULL;
-CREATE TYPE dbo.TipoEstado FROM NVARCHAR(30) NOT NULL; -- Aumentado ligeramente para Tipos de Movimiento
+CREATE TYPE dbo.TipoEstado FROM NVARCHAR(30) NOT NULL;
 CREATE TYPE dbo.TipoFlag FROM BIT NOT NULL;
 CREATE TYPE dbo.TipoMoneda FROM DECIMAL(10, 2) NULL;
 CREATE TYPE dbo.TipoMonedaTotal FROM DECIMAL(12, 2) NULL;
@@ -98,7 +98,6 @@ CREATE TYPE dbo.TipoFechaHora FROM DATETIME NULL;
 PRINT 'UDTs creados.';
 GO
 
--- Crear tabla Rol
 IF OBJECT_ID('dbo.Rol', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Rol (
@@ -116,7 +115,8 @@ BEGIN
     CREATE TABLE dbo.CategoriaProducto (
         idCategoria dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
         Nombre dbo.TipoNombre NOT NULL UNIQUE,
-        Descripcion dbo.TipoDescripcion NULL
+        Descripcion dbo.TipoDescripcion NULL,
+        Activo dbo.TipoFlag DEFAULT 1
     );
     PRINT 'Tabla CategoriaProducto creada.';
 END
@@ -145,8 +145,9 @@ BEGIN
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
+        Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_TelefonoLocal_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal)
-            ON DELETE CASCADE ON UPDATE CASCADE
+            ON DELETE NO ACTION ON UPDATE NO ACTION
     );
     PRINT 'Tabla TelefonoLocal creada.';
 END
@@ -184,8 +185,9 @@ BEGIN
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
+        Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_TelefonoProveedor_Proveedor FOREIGN KEY (idProveedor) REFERENCES dbo.Proveedor(idProveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE
+            ON DELETE NO ACTION ON UPDATE NO ACTION
     );
     PRINT 'Tabla TelefonoProveedor creada.';
 END
@@ -208,8 +210,9 @@ BEGIN
         Referencia dbo.TipoDescripcion NULL,
         Ubigeo dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
+        Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_DireccionProveedor_Proveedor FOREIGN KEY (idProveedor) REFERENCES dbo.Proveedor(idProveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE
+            ON DELETE NO ACTION ON UPDATE NO ACTION
     );
     PRINT 'Tabla DireccionProveedor creada.';
 END
@@ -253,8 +256,9 @@ BEGIN
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
+        Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_TelefonoCliente_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente)
-            ON DELETE CASCADE ON UPDATE CASCADE
+            ON DELETE NO ACTION ON UPDATE NO ACTION
     );
     PRINT 'Tabla TelefonoCliente creada.';
 END
@@ -277,8 +281,9 @@ BEGIN
         Referencia dbo.TipoDescripcion NULL,
         Ubigeo dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
+        Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_DireccionCliente_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente)
-            ON DELETE CASCADE ON UPDATE CASCADE
+            ON DELETE NO ACTION ON UPDATE NO ACTION
     );
     PRINT 'Tabla DireccionCliente creada.';
 END
@@ -296,14 +301,14 @@ BEGIN
     CREATE TABLE dbo.Usuario (
         idUsuario dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
         NombreUsuario dbo.TipoCodigo NOT NULL UNIQUE,
-        HashContrasena NVARCHAR(255) NOT NULL, -- Se mantiene NVARCHAR por longitud variable de hashes
+        HashContrasena NVARCHAR(255) NOT NULL,
         NombreCompleto dbo.TipoDescripcion NOT NULL,
         idRol dbo.TipoId NOT NULL,
         idLocalPredeterminado dbo.TipoId NULL,
         Email dbo.TipoEmail NULL UNIQUE,
         Activo dbo.TipoFlag DEFAULT 1,
-        CONSTRAINT FK_Usuario_Rol FOREIGN KEY (idRol) REFERENCES dbo.Rol(idRol) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Usuario_Local FOREIGN KEY (idLocalPredeterminado) REFERENCES dbo.Local(idLocal) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT FK_Usuario_Rol FOREIGN KEY (idRol) REFERENCES dbo.Rol(idRol) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Usuario_Local FOREIGN KEY (idLocalPredeterminado) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado (SET NULL no tiene sentido con lógica)
     );
     PRINT 'Tabla Usuario creada.';
 END
@@ -314,7 +319,8 @@ IF OBJECT_ID('dbo.MarcaVehiculo', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.MarcaVehiculo (
         idMarca dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        NombreMarca dbo.TipoCodigo NOT NULL UNIQUE
+        NombreMarca dbo.TipoCodigo NOT NULL UNIQUE,
+        Activo dbo.TipoFlag DEFAULT 1
     );
     PRINT 'Tabla MarcaVehiculo creada.';
 END
@@ -327,7 +333,8 @@ BEGIN
         idModelo dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
         idMarca dbo.TipoId NOT NULL,
         NombreModelo dbo.TipoCodigo NOT NULL,
-        CONSTRAINT FK_ModeloVehiculo_Marca FOREIGN KEY (idMarca) REFERENCES dbo.MarcaVehiculo(idMarca) ON DELETE NO ACTION ON UPDATE CASCADE,
+        Activo dbo.TipoFlag DEFAULT 1,
+        CONSTRAINT FK_ModeloVehiculo_Marca FOREIGN KEY (idMarca) REFERENCES dbo.MarcaVehiculo(idMarca) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
         CONSTRAINT UQ_ModeloVehiculo_Marca_Nombre UNIQUE (idMarca, NombreModelo)
     );
     PRINT 'Tabla ModeloVehiculo creada.';
@@ -347,9 +354,9 @@ BEGIN
         idConductorUsuario dbo.TipoId NULL,
         Estado dbo.TipoEstado DEFAULT 'Disponible' CHECK (Estado IN ('Disponible', 'En Mantenimiento', 'En Reparto')),
         Activo dbo.TipoFlag DEFAULT 1,
-        CONSTRAINT FK_Vehiculo_Modelo FOREIGN KEY (idModelo) REFERENCES dbo.ModeloVehiculo(idModelo) ON DELETE SET NULL ON UPDATE CASCADE,
-        CONSTRAINT FK_Vehiculo_LocalBase FOREIGN KEY (idLocalBase) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Vehiculo_Conductor FOREIGN KEY (idConductorUsuario) REFERENCES dbo.Usuario(idUsuario) ON DELETE SET NULL ON UPDATE NO ACTION
+        CONSTRAINT FK_Vehiculo_Modelo FOREIGN KEY (idModelo) REFERENCES dbo.ModeloVehiculo(idModelo) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (SET NULL no aplica con lógica)
+        CONSTRAINT FK_Vehiculo_LocalBase FOREIGN KEY (idLocalBase) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Vehiculo_Conductor FOREIGN KEY (idConductorUsuario) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado (SET NULL no aplica con lógica)
     );
     PRINT 'Tabla Vehiculo creada.';
 END
@@ -373,7 +380,7 @@ BEGIN
         Perecedero dbo.TipoFlag DEFAULT 0,
         FechaCaducidadLote dbo.TipoFecha NULL,
         Activo dbo.TipoFlag DEFAULT 1,
-        CONSTRAINT FK_Producto_Categoria FOREIGN KEY (idCategoria) REFERENCES dbo.CategoriaProducto(idCategoria) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT FK_Producto_Categoria FOREIGN KEY (idCategoria) REFERENCES dbo.CategoriaProducto(idCategoria) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado (SET NULL no aplica)
     );
     PRINT 'Tabla Producto creada.';
 END
@@ -396,8 +403,8 @@ BEGIN
         StockMinimoLocal dbo.TipoCantidad DEFAULT 0,
         UbicacionEnLocal dbo.TipoCodigoLargo NULL,
         FechaUltimaActualizacion dbo.TipoFechaHora DEFAULT GETDATE(),
-        CONSTRAINT FK_Inventario_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT FK_Inventario_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT FK_Inventario_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Inventario_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
         CONSTRAINT UQ_Inventario_Producto_Local UNIQUE (idProducto, idLocal)
     );
     PRINT 'Tabla Inventario creada.';
@@ -419,9 +426,9 @@ BEGIN
         MontoTotal dbo.TipoMonedaTotal DEFAULT 0.00,
         Estado dbo.TipoEstado NOT NULL DEFAULT 'Pedido' CHECK (Estado IN ('Pedido', 'Recibido Parcial', 'Recibido Completo', 'Cancelado')),
         Observaciones dbo.TipoDescripcion NULL,
-        CONSTRAINT FK_Compra_Proveedor FOREIGN KEY (idProveedor) REFERENCES dbo.Proveedor(idProveedor) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Compra_Usuario FOREIGN KEY (idUsuarioRegistro) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Compra_Local FOREIGN KEY (idLocalDestino) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION
+        CONSTRAINT FK_Compra_Proveedor FOREIGN KEY (idProveedor) REFERENCES dbo.Proveedor(idProveedor) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Compra_Usuario FOREIGN KEY (idUsuarioRegistro) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Compra_Local FOREIGN KEY (idLocalDestino) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION -- Ya estaba NO ACTION
     );
     PRINT 'Tabla Compra creada.';
 END
@@ -442,9 +449,9 @@ BEGIN
         idProducto dbo.TipoId NOT NULL,
         Cantidad dbo.TipoCantidad NOT NULL CHECK (Cantidad > 0),
         PrecioUnitarioCompra dbo.TipoMoneda NOT NULL CHECK (PrecioUnitarioCompra >= 0),
-        Subtotal AS (CONVERT(DECIMAL(12,2), Cantidad * PrecioUnitarioCompra)) PERSISTED, -- Se mantiene DECIMAL para cálculo preciso
-        CONSTRAINT FK_DetalleCompra_Compra FOREIGN KEY (idCompra) REFERENCES dbo.Compra(idCompra) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT FK_DetalleCompra_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE CASCADE
+        Subtotal AS (CONVERT(DECIMAL(12,2), Cantidad * PrecioUnitarioCompra)) PERSISTED,
+        CONSTRAINT FK_DetalleCompra_Compra FOREIGN KEY (idCompra) REFERENCES dbo.Compra(idCompra) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (CASCADE no aplica si Compra no se borra físicamente)
+        CONSTRAINT FK_DetalleCompra_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado
     );
     PRINT 'Tabla DetalleCompra creada.';
 END
@@ -468,10 +475,10 @@ BEGIN
         idVehiculoAsignado dbo.TipoId NULL,
         DireccionEnvio dbo.TipoNombreLargo NULL,
         Observaciones dbo.TipoDescripcion NULL,
-        CONSTRAINT FK_Venta_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Venta_Usuario FOREIGN KEY (idUsuarioVendedor) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_Venta_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION,
-        CONSTRAINT FK_Venta_Vehiculo FOREIGN KEY (idVehiculoAsignado) REFERENCES dbo.Vehiculo(idVehiculo) ON DELETE SET NULL ON UPDATE NO ACTION,
+        CONSTRAINT FK_Venta_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Venta_Usuario FOREIGN KEY (idUsuarioVendedor) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_Venta_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Ya estaba
+        CONSTRAINT FK_Venta_Vehiculo FOREIGN KEY (idVehiculoAsignado) REFERENCES dbo.Vehiculo(idVehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (SET NULL no aplica)
         CONSTRAINT UQ_Venta_Comprobante UNIQUE (TipoComprobante, SerieComprobante, NumeroComprobante)
     );
     PRINT 'Tabla Venta creada.';
@@ -495,9 +502,9 @@ BEGIN
         PrecioUnitarioVenta dbo.TipoMoneda NOT NULL CHECK (PrecioUnitarioVenta >= 0),
         DescuentoUnitario dbo.TipoMoneda DEFAULT 0.00 CHECK (DescuentoUnitario >= 0),
         CONSTRAINT CK_DescuentoVenta CHECK (DescuentoUnitario <= PrecioUnitarioVenta),
-        Subtotal AS (CONVERT(DECIMAL(12,2), Cantidad * (PrecioUnitarioVenta - DescuentoUnitario))) PERSISTED, -- Se mantiene DECIMAL
-        CONSTRAINT FK_DetalleVenta_Venta FOREIGN KEY (idVenta) REFERENCES dbo.Venta(idVenta) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT FK_DetalleVenta_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE CASCADE
+        Subtotal AS (CONVERT(DECIMAL(12,2), Cantidad * (PrecioUnitarioVenta - DescuentoUnitario))) PERSISTED,
+        CONSTRAINT FK_DetalleVenta_Venta FOREIGN KEY (idVenta) REFERENCES dbo.Venta(idVenta) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (CASCADE no aplica)
+        CONSTRAINT FK_DetalleVenta_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado
     );
     PRINT 'Tabla DetalleVenta creada.';
 END
@@ -519,9 +526,9 @@ BEGIN
         StockAnterior dbo.TipoCantidad NULL,
         StockNuevo dbo.TipoCantidad NOT NULL,
         Observaciones dbo.TipoDescripcion NULL,
-        CONSTRAINT FK_MovimientoInv_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE CASCADE,
-        CONSTRAINT FK_MovimientoInv_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION,
-        CONSTRAINT FK_MovimientoInv_Usuario FOREIGN KEY (idUsuarioResponsable) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE CASCADE
+        CONSTRAINT FK_MovimientoInv_Producto FOREIGN KEY (idProducto) REFERENCES dbo.Producto(idProducto) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
+        CONSTRAINT FK_MovimientoInv_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Ya estaba
+        CONSTRAINT FK_MovimientoInv_Usuario FOREIGN KEY (idUsuarioResponsable) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION -- Cambiado
     );
     PRINT 'Tabla MovimientoInventario creada.';
 END
@@ -532,4 +539,3 @@ BEGIN
     PRINT 'Índice IX_MovimientoInv_Prod_Local_Fecha creado.';
 END
 GO
-
