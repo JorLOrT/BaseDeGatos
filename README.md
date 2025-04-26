@@ -16,40 +16,43 @@
 
 **Índice:**
 
-1.  **Introducción**
-    1.1. Propósito
-    1.2. Alcance del Producto
-    1.3. Definiciones, Acrónimos y Abreviaturas
-    1.4. Referencias
-    1.5. Vista General del Documento
-2.  **Descripción General**
-    2.1. Perspectiva del Producto
-    2.2. Funciones del Producto
-    2.3. Características de los Usuarios
-    2.4. Restricciones Generales
-    2.5. Suposiciones y Dependencias
-3.  **Requerimientos Específicos**
-    3.1. Requerimientos Funcionales
-        3.1.1. Gestión de Entidades Base (Locales, Proveedores, Clientes)
-        3.1.2. Gestión de Contactos (Teléfonos, Direcciones)
-        3.1.3. Gestión de Productos y Categorías
-        3.1.4. Gestión de Compras a Proveedores
-        3.1.5. Gestión de Inventario y Stock
-        3.1.6. Gestión de Ventas a Clientes
-        3.1.7. Gestión de Vehículos y Logística
-        3.1.8. Administración de Usuarios y Roles
-        3.1.9. Reportes
-    3.2. Requerimientos No Funcionales
-        3.2.1. Rendimiento
-        3.2.2. Usabilidad
-        3.2.3. Seguridad
-        3.2.4. Fiabilidad
-        3.2.5. Mantenibilidad
-    3.3. Requerimientos de Interfaz Externa
-        3.3.1. Interfaz de Usuario
-        3.3.2. Interfaces de Hardware
-        3.3.3. Interfaces de Software
-4.  **Apéndices**
+1. **Introducción**
+   1.1. Propósito  
+   1.2. Alcance del Producto  
+   1.3. Definiciones, Acrónimos y Abreviaturas  
+   1.4. Referencias  
+   1.5. Vista General del Documento  
+
+2. **Descripción General**
+   2.1. Perspectiva del Producto  
+   2.2. Funciones del Producto  
+   2.3. Características de los Usuarios  
+   2.4. Restricciones Generales  
+   2.5. Suposiciones y Dependencias  
+
+3. **Requerimientos Específicos**
+   3.1. Requerimientos Funcionales  
+      3.1.1. Gestión de Entidades Base (Locales, Proveedores, Clientes)  
+      3.1.2. Gestión de Contactos (Teléfonos, Direcciones)  
+      3.1.3. Gestión de Productos y Categorías  
+      3.1.4. Gestión de Compras a Proveedores  
+      3.1.5. Gestión de Inventario y Stock  
+      3.1.6. Gestión de Ventas a Clientes  
+      3.1.7. Gestión de Vehículos y Logística  
+      3.1.8. Administración de Usuarios y Roles  
+      3.1.9. Reportes  
+   3.2. Requerimientos No Funcionales  
+      3.2.1. Rendimiento  
+      3.2.2. Usabilidad  
+      3.2.3. Seguridad  
+      3.2.4. Fiabilidad  
+      3.2.5. Mantenibilidad  
+   3.3. Requerimientos de Interfaz Externa  
+      3.3.1. Interfaz de Usuario  
+      3.3.2. Interfaces de Hardware  
+      3.3.3. Interfaces de Software  
+
+4. **Apéndices**
 
 ---
 
