@@ -1,5 +1,5 @@
 -- Insersión de Datos
-
+use AlmacenBD
 -- Insertar Roles
 INSERT INTO dbo.Rol (NombreRol, Descripcion) VALUES
 ('ADMIN', 'Administrador del sistema con acceso total'),
