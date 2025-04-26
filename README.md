@@ -10,6 +10,7 @@
 
 | Versión | Fecha       | Autor(es)         | Descripción de Cambios       |
 | :------ | :---------- | :---------------- | :--------------------------- |
+| 1.1     | 2025-04-25  | La Nave del Código | Elementos de la base de datos añadidos |
 | 1.0     | 2025-04-02  | Transportes Banda | Versión Inicial del documento |
 
 ---
