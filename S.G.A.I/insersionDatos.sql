@@ -9,7 +9,6 @@ INSERT INTO dbo.Rol (NombreRol, Descripcion) VALUES
 ('SUPERVISOR', 'Supervisor con permisos extendidos');
 GO
 
-
 -- Insertar Categorías de Productos
 INSERT INTO dbo.CategoriaProducto (Nombre, Descripcion) VALUES
 ('Aceites', 'Aceites para motor y transmisión'),
@@ -37,7 +36,6 @@ GO
 
 -- Insertar Usuarios (usando hash simple para demo - en producción usar hash seguro)
 INSERT INTO dbo.Usuario (NombreUsuario, HashContrasena, NombreCompleto, idRol, idLocalPredeterminado, Email, Activo) VALUES
-('admin', CONVERT(NVARCHAR(255), HASHBYTES('SHA2_256', 'admin123'), 2), 'Administrador Sistema', 1, 1, 'admin@empresa.com', 1),
 ('vendedor1', CONVERT(NVARCHAR(255), HASHBYTES('SHA2_256', 'vend123'), 2), 'Juan Pérez', 2, 2, 'juan@empresa.com', 1),
 ('almacenero1', CONVERT(NVARCHAR(255), HASHBYTES('SHA2_256', 'alm123'), 2), 'Pedro López', 3, 1, 'pedro@empresa.com', 1),
 ('conductor1', CONVERT(NVARCHAR(255), HASHBYTES('SHA2_256', 'cond123'), 2), 'Carlos García', 4, 1, 'carlos@empresa.com', 1);
@@ -58,7 +56,7 @@ GO
 
 -- Insertar Vehículos
 INSERT INTO dbo.Vehiculo (Placa, idModelo, Anio, CapacidadCargaKg, idLocalBase, idConductorUsuario, Estado) VALUES
-('ABC123', 1, 2022, 1000.00, 1, 4, 'Disponible'),
+('ABC123', 1, 2022, 1000.00, 1, 2, 'Disponible'),
 ('DEF456', 3, 2021, 2000.00, 1, NULL, 'Disponible'),
 ('GHI789', 7, 2023, 5000.00, 1, NULL, 'En Mantenimiento');
 GO
@@ -92,6 +90,18 @@ INSERT INTO dbo.Cliente (TipoCliente, Ruc, Dni, NombreCompletoORazonSocial, Emai
 ('Mayorista', '159753', 3, 'Mecánica Rápida E.I.R.L.', 'mecanica@rapidamail.com', 1);
 GO
 
+-- Insertar datos en la tabla TelefonoCliente
+INSERT INTO dbo.TelefonoCliente (idCliente, NumeroTelefono, TipoTelefono, EsPrincipal)
+VALUES 
+(1, '123456789', 'Fijo', 1),
+(2, '987654321', 'Móvil', 1);
+
+-- Insertar datos en la tabla DireccionCliente
+INSERT INTO dbo.DireccionCliente (idCliente, DireccionTexto, TipoDireccion, Referencia, EsPrincipal)
+VALUES 
+(1, 'Av. Comercio 123', 'Oficina', 'Cerca del banco', 1),
+(2, 'Calle Principal 456', 'Casa', 'Frente a la plaza', 1);
+
 -- Insertar Productos
 INSERT INTO dbo.Producto (CodigoSKU, CodigoBarras, Nombre, Descripcion, idCategoria, 
     UnidadMedida, PrecioCompraReferencial, PrecioVentaMayorista, PrecioVentaMinorista, 
@@ -99,7 +109,6 @@ INSERT INTO dbo.Producto (CodigoSKU, CodigoBarras, Nombre, Descripcion, idCatego
 ('ACE001', '7751234567890', 'Aceite Motor 10W-30 1L', 'Aceite sintético para motor', 1, 'UND', 25.00, 35.00, 45.00, 50, 1),
 ('FIL001', '7751234567891', 'Filtro de Aceite Toyota', 'Filtro original Toyota', 2, 'UND', 15.00, 25.00, 35.00, 30, 0),
 ('BAT001', '7751234567892', 'Batería 13 placas', 'Batería auto', 4, 'UND', 180.00, 250.00, 300.00, 10, 0);
-GO
 
 -- Insertar Inventario Inicial
 INSERT INTO dbo.Inventario (idProducto, idLocal, Cantidad, StockMinimoLocal, UbicacionEnLocal) VALUES
@@ -109,7 +118,6 @@ INSERT INTO dbo.Inventario (idProducto, idLocal, Cantidad, StockMinimoLocal, Ubi
 (1, 2, 30, 10, 'EST-01'),
 (2, 2, 15, 5, 'EST-02'),
 (3, 2, 5, 2, 'EST-03');
-GO
 
 -- Insertar Movimientos de Inventario Iniciales
 INSERT INTO dbo.MovimientoInventario (idProducto, idLocal, TipoMovimiento, Cantidad, 
@@ -117,7 +125,43 @@ INSERT INTO dbo.MovimientoInventario (idProducto, idLocal, TipoMovimiento, Canti
 (1, 1, 'Ajuste_Positivo', 100, 1, 0, 100, 'Inventario inicial'),
 (2, 1, 'Ajuste_Positivo', 50, 1, 0, 50, 'Inventario inicial'),
 (3, 1, 'Ajuste_Positivo', 20, 1, 0, 20, 'Inventario inicial');
-GO
+
+-- Insertar datos en la tabla Compra
+INSERT INTO dbo.Compra 
+    (idProveedor, idUsuarioRegistro, idLocalDestino, FechaCompra, 
+     TipoComprobante, NumeroComprobante, MontoTotal, Estado, Observaciones)
+VALUES 
+    (1, 1, 1, '2025-04-26', 'Factura', 'F001-001', 1500.00, 'Pedido', 'Compra de aceites'),
+    (2, 1, 1, '2025-04-26', 'Factura', 'F001-002', 2500.00, 'Pedido', 'Compra de filtros'),
+    (1, 2, 2, '2025-04-26', 'Boleta', 'B001-001', 800.00, 'Pedido', 'Compra de repuestos');
+
+-- Insertar datos en la tabla DetalleCompra
+INSERT INTO dbo.DetalleCompra 
+    (idCompra, idProducto, Cantidad, PrecioUnitarioCompra)
+VALUES 
+    (1, 1, 10, 150.00),  -- Detalles para la primera compra
+    (1, 2, 5, 100.00),
+    (2, 3, 20, 125.00),  -- Detalles para la segunda compra
+    (3, 1, 8, 100.00);   -- Detalles para la tercera compra
+
+-- Insertar datos en la tabla Venta
+INSERT INTO dbo.Venta 
+    (idCliente, idUsuarioVendedor, idLocal, FechaVenta, 
+     TipoComprobante, SerieComprobante, NumeroComprobante, 
+     MontoTotal, EstadoVenta, RequiereEnvio, DireccionEnvio, Observaciones)
+VALUES 
+    (1, 2, 1, '26/04/25', 'Factura', 'F001', '00001', 2000.00, 'Entregada', 0, NULL, 'Venta mayorista'),
+    (2, 2, 1, '26/04/25', 'Boleta', 'B001', '00001', 500.00, 'Completada', 1, 'Av. Principal 123', 'Venta minorista'),
+    (1, 1, 2, '26/04/25', 'Factura', 'F001', '00002', 1500.00, 'Cancelada', 0, NULL, 'Venta corporativa');
+
+-- Insertar datos en la tabla DetalleVenta
+INSERT INTO dbo.DetalleVenta 
+    (idVenta, idProducto, Cantidad, PrecioUnitarioVenta, DescuentoUnitario)
+VALUES 
+    (1, 1, 5, 200.00, 10.00),  -- Detalles para la primera venta
+    (1, 2, 3, 150.00, 5.00),
+    (2, 1, 2, 250.00, 0.00),   -- Detalles para la segunda venta
+    (3, 3, 10, 150.00, 15.00); -- Detalles para la tercera venta
 
 -- Actualización y Eliminación de Datos
 
@@ -134,6 +178,7 @@ UPDATE dbo.Vehiculo
 SET Estado = 'En Mantenimiento'
 WHERE Placa IN ('ABC123', 'DEF456');
 GO
+
 
 /* Se requiere desactivar todos los usuarios que no han accedido 
 al sistema en los últimos 90 días */

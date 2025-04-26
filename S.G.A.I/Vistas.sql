@@ -1,7 +1,7 @@
 -- Vistas para Inventario
 -----------------------
 use AlmacenBD
-/* Vista para ver el stock actual con información detallada de productos */
+/* Vista para ver el stock actual con informaciÃ³n detallada de productos */
 CREATE OR ALTER VIEW dbo.vw_StockActual
 AS
 SELECT 
@@ -20,13 +20,15 @@ FROM dbo.Producto p
 INNER JOIN dbo.Inventario i ON p.idProducto = i.idProducto
 INNER JOIN dbo.Local l ON i.idLocal = l.idLocal
 LEFT JOIN dbo.CategoriaProducto cp ON p.idCategoria = cp.idCategoria
-WHERE p.Activo = 1;
+WHERE 
+	p.Activo = 1
+	AND l.Activo=1;
 GO
 
 -- Vistas para Clientes
 ---------------------
 
-/* Vista para información completa de clientes */
+/* Vista para informaciÃ³n completa de clientes */
 CREATE OR ALTER VIEW dbo.vw_ClientesCompleto
 AS
 SELECT 
@@ -45,15 +47,16 @@ FROM dbo.Cliente c
 LEFT JOIN dbo.DireccionCliente dc ON c.idCliente = dc.idCliente AND dc.EsPrincipal = 1
 LEFT JOIN dbo.TelefonoCliente tc ON c.idCliente = tc.idCliente AND tc.EsPrincipal = 1
 LEFT JOIN dbo.Venta v ON c.idCliente = v.idCliente
-WHERE c.Activo = 1 AND c.TipoCliente != 'Anonimo'
+WHERE 
+	c.Activo = 1 
+	AND c.TipoCliente != 'Anonimo'
+	AND dc.Activo=1 AND tc.Activo=1
 GROUP BY c.idCliente, c.NombreCompletoORazonSocial, c.TipoCliente, 
          c.Ruc, c.Dni, c.Email, dc.DireccionTexto, tc.NumeroTelefono;
 GO
-
--- Vistas para Logística
+-- Vistas para LogÃ­stica
 ----------------------
-
-/* Vista para seguimiento de vehículos y entregas */
+/* Vista para seguimiento de vehÃ­culos y entregas */
 CREATE OR ALTER VIEW dbo.vw_VehiculosEstado
 AS
 SELECT 
@@ -108,10 +111,10 @@ ORDER BY name;
 -- Ver el stock actual con detalles de productos
 SELECT * FROM dbo.vw_StockActual;
 
--- Ver información completa de clientes
+-- Ver informaciÃ³n completa de clientes
 SELECT * FROM dbo.vw_ClientesCompleto;
 
--- Ver estado actual de vehículos y entregas
+-- Ver estado actual de vehÃ­culos y entregas
 SELECT * FROM dbo.vw_VehiculosEstado;
 
 -- Ver registro de movimientos de inventario

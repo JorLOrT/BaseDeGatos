@@ -141,7 +141,7 @@ IF OBJECT_ID('dbo.TelefonoLocal', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.TelefonoLocal (
         idTelefonoLocal dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idLocal dbo.TipoId NOT NULL,
+        idLocal dbo.TipoId,
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
@@ -181,7 +181,7 @@ IF OBJECT_ID('dbo.TelefonoProveedor', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.TelefonoProveedor (
         idTelefonoProveedor dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idProveedor dbo.TipoId NOT NULL,
+        idProveedor dbo.TipoId,
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
@@ -204,7 +204,7 @@ IF OBJECT_ID('dbo.DireccionProveedor', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.DireccionProveedor (
         idDireccionProveedor dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idProveedor dbo.TipoId NOT NULL,
+        idProveedor dbo.TipoId,
         DireccionTexto dbo.TipoTextoLargo NOT NULL,
         TipoDireccion dbo.TipoCodigo NULL,
         Referencia dbo.TipoDescripcion NULL,
@@ -252,7 +252,7 @@ IF OBJECT_ID('dbo.TelefonoCliente', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.TelefonoCliente (
         idTelefonoCliente dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idCliente dbo.TipoId NOT NULL,
+        idCliente dbo.TipoId,
         NumeroTelefono dbo.TipoTelefono NOT NULL,
         TipoTelefono dbo.TipoCodigo NULL,
         EsPrincipal dbo.TipoFlag DEFAULT 0,
@@ -275,7 +275,7 @@ IF OBJECT_ID('dbo.DireccionCliente', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.DireccionCliente (
         idDireccionCliente dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idCliente dbo.TipoId NOT NULL,
+        idCliente dbo.TipoId,
         DireccionTexto dbo.TipoTextoLargo NOT NULL,
         TipoDireccion dbo.TipoCodigo NULL,
         Referencia dbo.TipoDescripcion NULL,
@@ -303,7 +303,7 @@ BEGIN
         NombreUsuario dbo.TipoCodigo NOT NULL UNIQUE,
         HashContrasena NVARCHAR(255) NOT NULL,
         NombreCompleto dbo.TipoDescripcion NOT NULL,
-        idRol dbo.TipoId NOT NULL,
+        idRol dbo.TipoId,
         idLocalPredeterminado dbo.TipoId NULL,
         Email dbo.TipoEmail NULL UNIQUE,
         Activo dbo.TipoFlag DEFAULT 1,
@@ -331,7 +331,7 @@ IF OBJECT_ID('dbo.ModeloVehiculo', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.ModeloVehiculo (
         idModelo dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idMarca dbo.TipoId NOT NULL,
+        idMarca dbo.TipoId,
         NombreModelo dbo.TipoCodigo NOT NULL,
         Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_ModeloVehiculo_Marca FOREIGN KEY (idMarca) REFERENCES dbo.MarcaVehiculo(idMarca) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
@@ -350,8 +350,8 @@ BEGIN
         idModelo dbo.TipoId NULL,
         Anio dbo.TipoCantidad NULL,
         CapacidadCargaKg dbo.TipoMoneda NULL,
-        idLocalBase dbo.TipoId NOT NULL,
-        idConductorUsuario dbo.TipoId NULL,
+        idLocalBase dbo.TipoId,
+        idConductorUsuario INT,
         Estado dbo.TipoEstado DEFAULT 'Disponible' CHECK (Estado IN ('Disponible', 'En Mantenimiento', 'En Reparto')),
         Activo dbo.TipoFlag DEFAULT 1,
         CONSTRAINT FK_Vehiculo_Modelo FOREIGN KEY (idModelo) REFERENCES dbo.ModeloVehiculo(idModelo) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (SET NULL no aplica con lógica)
@@ -397,8 +397,8 @@ IF OBJECT_ID('dbo.Inventario', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Inventario (
         idInventario dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idProducto dbo.TipoId NOT NULL,
-        idLocal dbo.TipoId NOT NULL,
+        idProducto dbo.TipoId,
+        idLocal dbo.TipoId,
         Cantidad dbo.TipoCantidad NOT NULL DEFAULT 0,
         StockMinimoLocal dbo.TipoCantidad DEFAULT 0,
         UbicacionEnLocal dbo.TipoCodigoLargo NULL,
@@ -416,9 +416,9 @@ IF OBJECT_ID('dbo.Compra', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Compra (
         idCompra dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idProveedor dbo.TipoId NOT NULL,
-        idUsuarioRegistro dbo.TipoId NOT NULL,
-        idLocalDestino dbo.TipoId NOT NULL,
+        idProveedor dbo.TipoId,
+        idUsuarioRegistro dbo.TipoId,
+        idLocalDestino dbo.TipoId,
         FechaCompra dbo.TipoFecha NOT NULL,
         FechaRecepcion dbo.TipoFecha NULL,
         TipoComprobante dbo.TipoCodigo NULL,
@@ -445,8 +445,8 @@ IF OBJECT_ID('dbo.DetalleCompra', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.DetalleCompra (
         idDetalleCompra dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idCompra dbo.TipoId NOT NULL,
-        idProducto dbo.TipoId NOT NULL,
+        idCompra dbo.TipoId,
+        idProducto dbo.TipoId,
         Cantidad dbo.TipoCantidad NOT NULL CHECK (Cantidad > 0),
         PrecioUnitarioCompra dbo.TipoMoneda NOT NULL CHECK (PrecioUnitarioCompra >= 0),
         Subtotal AS (CONVERT(DECIMAL(12,2), Cantidad * PrecioUnitarioCompra)) PERSISTED,
@@ -462,9 +462,9 @@ IF OBJECT_ID('dbo.Venta', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Venta (
         idVenta dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idCliente dbo.TipoId NOT NULL,
-        idUsuarioVendedor dbo.TipoId NOT NULL,
-        idLocal dbo.TipoId NOT NULL,
+        idCliente dbo.TipoId,
+        idUsuarioVendedor dbo.TipoId,
+        idLocal dbo.TipoId,
         FechaVenta dbo.TipoFechaHora DEFAULT GETDATE(),
         TipoComprobante dbo.TipoEstado NOT NULL CHECK (TipoComprobante IN ('Factura', 'Boleta', 'NotaVenta', 'Ticket')),
         SerieComprobante dbo.TipoCodigo NULL,
@@ -475,10 +475,10 @@ BEGIN
         idVehiculoAsignado dbo.TipoId NULL,
         DireccionEnvio dbo.TipoNombreLargo NULL,
         Observaciones dbo.TipoDescripcion NULL,
-        CONSTRAINT FK_Venta_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
-        CONSTRAINT FK_Venta_Usuario FOREIGN KEY (idUsuarioVendedor) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado
-        CONSTRAINT FK_Venta_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Ya estaba
-        CONSTRAINT FK_Venta_Vehiculo FOREIGN KEY (idVehiculoAsignado) REFERENCES dbo.Vehiculo(idVehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION, -- Cambiado (SET NULL no aplica)
+        CONSTRAINT FK_Venta_Cliente FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente) ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK_Venta_Usuario FOREIGN KEY (idUsuarioVendedor) REFERENCES dbo.Usuario(idUsuario) ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK_Venta_Local FOREIGN KEY (idLocal) REFERENCES dbo.Local(idLocal) ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK_Venta_Vehiculo FOREIGN KEY (idVehiculoAsignado) REFERENCES dbo.Vehiculo(idVehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION,
         CONSTRAINT UQ_Venta_Comprobante UNIQUE (TipoComprobante, SerieComprobante, NumeroComprobante)
     );
     PRINT 'Tabla Venta creada.';
@@ -496,8 +496,8 @@ IF OBJECT_ID('dbo.DetalleVenta', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.DetalleVenta (
         idDetalleVenta dbo.TipoId IDENTITY(1,1) PRIMARY KEY,
-        idVenta dbo.TipoId NOT NULL,
-        idProducto dbo.TipoId NOT NULL,
+        idVenta dbo.TipoId,
+        idProducto dbo.TipoId,
         Cantidad dbo.TipoCantidad NOT NULL CHECK (Cantidad > 0),
         PrecioUnitarioVenta dbo.TipoMoneda NOT NULL CHECK (PrecioUnitarioVenta >= 0),
         DescuentoUnitario dbo.TipoMoneda DEFAULT 0.00 CHECK (DescuentoUnitario >= 0),
@@ -515,12 +515,12 @@ IF OBJECT_ID('dbo.MovimientoInventario', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.MovimientoInventario (
         idMovimiento dbo.TipoIdGrande IDENTITY(1,1) PRIMARY KEY,
-        idProducto dbo.TipoId NOT NULL,
-        idLocal dbo.TipoId NOT NULL,
+        idProducto dbo.TipoId,
+        idLocal dbo.TipoId,
         FechaHora dbo.TipoFechaHora DEFAULT GETDATE(),
         TipoMovimiento dbo.TipoEstado NOT NULL CHECK (TipoMovimiento IN ('Compra', 'Venta', 'Transferencia_Salida', 'Transferencia_Entrada', 'Ajuste_Positivo', 'Ajuste_Negativo', 'Devolucion_Cliente', 'Devolucion_Proveedor')),
         Cantidad dbo.TipoCantidad NOT NULL,
-        idUsuarioResponsable dbo.TipoId NOT NULL,
+        idUsuarioResponsable dbo.TipoId,
         idReferencia dbo.TipoId NULL,
         MotivoReferencia dbo.TipoCodigo NULL,
         StockAnterior dbo.TipoCantidad NULL,
