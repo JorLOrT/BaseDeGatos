@@ -53,8 +53,6 @@
       3.3.2. Interfaces de Hardware  
       3.3.3. Interfaces de Software  
 
-4. **Apéndices**
-
 ---
 
 **1. Introducción**
@@ -258,10 +256,6 @@ El sistema será utilizado por diferentes empleados de Transportes Banda, cada u
 
 ---
 
-**4. Apéndices** (Opcional)
-
-*   Diagrama Entidad-Relación de la base de datos (si se desea adjuntar).
-*   Diagramas de flujo de procesos clave (Compra, Venta, Ajuste).
 
 ---
 
